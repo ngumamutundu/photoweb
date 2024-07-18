@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nature Media Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure full viewport height */
+        }
+        .container {
+            flex: 1; /* Grow to fill remaining vertical space */
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .gallery-item {
+            margin: 10px;
+            text-align: center;
+        }
+        .gallery-item img, .gallery-item video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 250px; /* Limiting the maximum width of images */
+        }
+        .donate-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            text-align: center;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+        .donate-button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nature Media Gallery</h1>
+            <p>Upload and download beautiful nature photos and videos.</p>
+        </div>
+        <section id="photos">
+            <h2>Photo Gallery</h2>
+            <div class="gallery">
+                <!-- Placeholder for photos -->
+                <!-- Repeat the following gallery-item block for each photo -->
+                <div class="gallery-item">
+                    <img src="/photos/1.jpg" alt="Nature Photo">
+                    <br>
+                    <a href="/photos/1.jpg" download class="btn btn-primary">Download</a>
+                </div>
+                <div class="gallery-item">
+                    <img src="/photos/2.jpg" alt="Nature Photo">
+                    <br>
+                    <a href="/photos/2.jpg" download class="btn btn-primary">Download</a>
+                </div>
+                <div class="gallery-item">
+                    <img src="/photos/3.jpg" alt="Nature Photo">
+                    <br>
+                    <a href="/photos/3.jpg" download class="btn btn-primary">Download</a>
+                </div>
+                <div class="gallery-item">
+                    <img src="/photos/4.jpg" alt="Nature Photo">
+                    <br>
+                    <a href="/photos/4.jpg" download class="btn btn-primary">Download</a>
+                </div>
+                <div class="gallery-item">
+                    <img src="/photos/5.jpg" alt="Nature Photo">
+                    <br>
+                    <a href="/photos/5.jpg" download class="btn btn-primary">Download</a>
+                </div>
+                <div class="gallery-item">
+                    <img src="/photos/6.jpg" alt="Nature Photo">
+                    <br>
+                    <a href="/photos/6.jpg" download class="btn btn-primary">Download</a>
+                </div>
+                <!-- End of repeatable gallery-item block -->
+                <!-- Repeat this block 499 more times for a total of 500 photos -->
+            </div>
+        </section>
+        <section id="videos">
+            <h2>Video Gallery</h2>
+            <div class="gallery">
+                <!-- Placeholder for videos -->
+                <!-- Repeat the following gallery-item block for each video -->
+                <div class="gallery-item">
+                    <video controls>
+                        <source src="path_to_your_video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <br>
+                    <a href="path_to_your_video.mp4" download class="btn btn-primary">Download</a>
+                </div>
+                <!-- End of repeatable gallery-item block -->
+                <!-- Repeat this block 49 more times for a total of 50 videos -->
+            </div>
+        </section>
+    </div>
+
+    <a href="https://www.buymeacoffee.com/yourusername" target="_blank" class="donate-button">Buy me a coffee ☕</a>
+    <footer>
+        <p>&copy; 2024 Nature Media Gallery. All rights reserved.</p>
+    </footer>
+</body>
+</html>
