@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nature Media Gallery</title>
+    <title>Pio Media Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #222; /* Dark background */
+            color: #fff; /* Light text */
             margin: 0;
             padding: 0;
             display: flex;
@@ -19,14 +21,56 @@
             width: 80%;
             margin: auto;
             padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #333; /* Slightly lighter background */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             border-radius: 5px;
             margin-top: 20px;
         }
         .header {
             text-align: center;
             margin-bottom: 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-input {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 1px solid #444;
+            border-radius: 25px 0 0 25px;
+            width: 80%;
+            max-width: 600px;
+            color: #222;
+            background-color: #444;
+            transition: background-color 0.3s;
+        }
+        .search-input:focus {
+            background-color: #555;
+            outline: none;
+        }
+        .search-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 0 25px 25px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+        .search-button i {
+            margin-right: 8px;
         }
         .gallery {
             display: flex;
@@ -35,109 +79,303 @@
             margin-top: 20px;
         }
         .gallery-item {
+            position: relative; /* Ensure relative positioning for absolute download button */
             margin: 10px;
             text-align: center;
+            max-width: 250px; /* Limit the width of each gallery item */
+            cursor: pointer; /* Change cursor to pointer on hover */
         }
         .gallery-item img, .gallery-item video {
             max-width: 100%;
             height: auto;
             display: block;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 250px; /* Limiting the maximum width of images */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* Light shadow */
+            transition: transform 0.3s ease;
         }
-        .donate-button {
+        .gallery-item:hover img, .gallery-item:hover video {
+            transform: scale(1.05); /* Zoom in on hover */
+        }
+        .download-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.3s ease;
+            border-radius: 5px;
+        }
+        .gallery-item:hover .download-overlay {
+            opacity: 1; /* Show overlay on hover */
+        }
+        .download-button {
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .download-button:hover {
+            background-color: #0056b3;
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+            overflow: auto;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #333; /* Dark background for modal content */
+            margin: auto;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 80%;
+            max-height: 80%;
+            display: flex;
+            align-items: center;
+            overflow: auto;
+            position: relative;
+        }
+        .modal-content img {
+            max-width: 50%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* Light shadow */
+        }
+        .modal-details {
+            margin-left: 20px;
+            color: #ddd;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            align-items: flex-start;
+        }
+        .modal-download-options {
+            display: flex;
+            flex-direction: column; /* Arrange buttons vertically */
+            gap: 10px; /* Space between buttons */
+            width: 100%;
+        }
+        .modal-download-options a {
+            width: 100%; /* Make buttons span the full width of the container */
+        }
+        .modal-close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .share-button {
+            display: inline-flex;
+            align-items: center;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            margin-top: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+            font-size: 16px;
+            position: relative;
+        }
+        .share-button:hover {
+            background-color: #0056b3;
+        }
+        .share-icon {
+            margin-right: 8px;
+        }
+        .buy-me-coffee {
             display: block;
-            width: 200px;
+            width: 220px;
             margin: 20px auto;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
             background-color: #007bff;
             color: #fff;
             text-decoration: none;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s;
         }
-        .donate-button:hover {
+        .buy-me-coffee:hover {
             background-color: #0056b3;
         }
         footer {
             text-align: center;
             padding: 10px;
-            background-color: #333;
-            color: #fff;
+            background-color: #444; /* Darker footer background */
+            color: #ccc; /* Lighter footer text */
             width: 100%;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Nature Media Gallery</h1>
+            <h1>Pio Media Gallery</h1>
             <p>Upload and download beautiful nature photos and videos.</p>
         </div>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <form class="search-form">
+                <input type="text" id="search" class="search-input" placeholder="Search for photos..." onkeyup="searchMedia()">
+                <button type="button" class="search-button">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+        
         <section id="photos">
             <h2>Photo Gallery</h2>
-            <div class="gallery">
+            <div class="gallery" id="photo-gallery">
                 <!-- Placeholder for photos -->
-                <!-- Repeat the following gallery-item block for each photo -->
                 <div class="gallery-item">
-                    <img src="/photos/1.jpg" alt="Nature Photo">
-                    <br>
-                    <a href="/photos/1.jpg" download class="btn btn-primary">Download</a>
+                    <img src="/photos/1.jpg" alt="Mountain forest">
+                    <div class="download-overlay">
+                        <a href="/photos/1.jpg" download class="download-button">Download</a>
+                    </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="/photos/2.jpg" alt="Nature Photo">
-                    <br>
-                    <a href="/photos/2.jpg" download class="btn btn-primary">Download</a>
+                    <img src="/photos/2.jpg" alt="Photo Placeholder">
+                    <div class="download-overlay">
+                        <a href="/photos/2.jpg" download class="download-button">Download</a>
+                    </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="/photos/3.jpg" alt="Nature Photo">
-                    <br>
-                    <a href="/photos/3.jpg" download class="btn btn-primary">Download</a>
+                    <img src="/photos/3.jpg" alt="Photo Placeholder">
+                    <div class="download-overlay">
+                        <a href="/photos/3.jpg" download class="download-button">Download</a>
+                    </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="/photos/4.jpg" alt="Nature Photo">
-                    <br>
-                    <a href="/photos/4.jpg" download class="btn btn-primary">Download</a>
+                    <img src="/photos/4.jpg" alt="Photo Placeholder">
+                    <div class="download-overlay">
+                        <a href="/photos/4.jpg" download class="download-button">Download</a>
+                    </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="/photos/5.jpg" alt="Nature Photo">
-                    <br>
-                    <a href="/photos/5.jpg" download class="btn btn-primary">Download</a>
+                    <img src="/photos/5.jpg" alt="Photo Placeholder">
+                    <div class="download-overlay">
+                        <a href="/photos/5.jpg" download class="download-button">Download</a>
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="/photos/6.jpg" alt="Nature Photo">
-                    <br>
-                    <a href="/photos/6.jpg" download class="btn btn-primary">Download</a>
-                </div>
-                <!-- End of repeatable gallery-item block -->
-                <!-- Repeat this block 499 more times for a total of 500 photos -->
+                <!-- End of placeholder -->
             </div>
         </section>
+        
         <section id="videos">
             <h2>Video Gallery</h2>
-            <div class="gallery">
+            <div class="gallery" id="video-gallery">
                 <!-- Placeholder for videos -->
-                <!-- Repeat the following gallery-item block for each video -->
                 <div class="gallery-item">
-                    <video controls>
-                        <source src="path_to_your_video.mp4" type="video/mp4">
+                    <video width="250" controls>
+                        <source src="https://via.placeholder.com/250x150.mp4?text=Video+Placeholder" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
-                    <br>
-                    <a href="path_to_your_video.mp4" download class="btn btn-primary">Download</a>
+                    <div class="download-overlay">
+                        <a href="https://via.placeholder.com/250x150.mp4?text=Video+Placeholder" download class="download-button">Download</a>
+                    </div>
                 </div>
-                <!-- End of repeatable gallery-item block -->
-                <!-- Repeat this block 49 more times for a total of 50 videos -->
+                <!-- End of placeholder -->
             </div>
         </section>
+
+        <!-- Buy Me a Coffee Button -->
+        <a href="#" class="buy-me-coffee">Buy Me a Coffee</a>
     </div>
 
-    <a href="https://www.buymeacoffee.com/yourusername" target="_blank" class="donate-button">Buy me a coffee ☕</a>
+    <!-- Modal for displaying full-size photo/video and details -->
+    <div id="modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <img id="modal-image" src="" alt="Modal Photo">
+            <div class="modal-details">
+                <h3 id="photo-title">Title</h3>
+                <p id="photo-description">Description</p>
+                <div class="modal-download-options">
+                    <a id="download-original" class="download-button" href="" download>Download Original</a>
+                    <a id="download-large" class="download-button" href="" download>Download Large</a>
+                    <a id="download-medium" class="download-button" href="" download>Download Medium</a>
+                    <a id="download-small" class="download-button" href="" download>Download Small</a>
+                </div>
+                <a id="share-button" class="share-button" href="#" target="_blank">
+                    <i class="fas fa-share-alt share-icon"></i> Share
+                </a>
+            </div>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+    </div>
+
     <footer>
-        <p>&copy; 2024 Nature Media Gallery. All rights reserved.</p>
+        <p>&copy; 2024 Pio Media Gallery. All rights reserved.</p>
     </footer>
+
+    <script>
+        function searchMedia() {
+            // Placeholder for search functionality
+        }
+
+        function openModal(imageSrc, title, description, downloadUrls) {
+            document.getElementById('modal-image').src = imageSrc;
+            document.getElementById('photo-title').textContent = title;
+            document.getElementById('photo-description').textContent = description;
+            
+            document.getElementById('download-original').href = downloadUrls.original;
+            document.getElementById('download-large').href = downloadUrls.large;
+            document.getElementById('download-medium').href = downloadUrls.medium;
+            document.getElementById('download-small').href = downloadUrls.small;
+            
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('share-button').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(imageSrc)}`;
+        }
+
+        function closeModal(event) {
+            if (event && event.target === document.getElementById('modal')) {
+                document.getElementById('modal').style.display = 'none';
+            }
+        }
+
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const img = item.querySelector('img');
+                const title = img.alt || 'Untitled';
+                const description = 'Description of the image'; // Placeholder
+                const downloadUrls = {
+                    original: img.src, // You should provide actual URLs for different sizes
+                    large: img.src.replace(/(\.\w+)$/, '-large$1'),
+                    medium: img.src.replace(/(\.\w+)$/, '-medium$1'),
+                    small: img.src.replace(/(\.\w+)$/, '-small$1')
+                };
+                openModal(img.src, title, description, downloadUrls);
+            });
+        });
+    </script>
 </body>
 </html>
